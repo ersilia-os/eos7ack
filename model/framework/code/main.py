@@ -3,38 +3,42 @@ import os
 import csv
 import joblib
 import sys
+import requests
 from rdkit import Chem
 from rdkit.Chem.Descriptors import MolWt
+from urllib.parse import urljoin
+from bs4 import BeautifulSoup
+
 
 # parse arguments
 input_file = sys.argv[1]
 output_file = sys.argv[2]
 
-# current file directory
-root = os.path.dirname(os.path.abspath(__file__))
-
-# checkpoints directory
-checkpoints_dir = os.path.abspath(os.path.join(root, "..", "..", "checkpoints"))
-
-# read checkpoints (here, simply an integer number: 42)
-ckpt = joblib.load(os.path.join(checkpoints_dir, "checkpoints.joblib"))
-
-# model to be run (here, calculate the Molecular Weight and add ckpt (42) to it)
-def my_model(smiles_list, ckpt):
-    return [MolWt(Chem.MolFromSmiles(smi))+ckpt for smi in smiles_list]
-    
-# read SMILES from .csv file, assuming one column with header
+# read smiles list
+smiles_list = []
 with open(input_file, "r") as f:
     reader = csv.reader(f)
-    next(reader) # skip header
-    smiles_list = [r[0] for r in reader]
-    
-# run model
-outputs = my_model(smiles_list, ckpt)
+    next(reader)
+    for r in reader:
+    	smiles_list += [r[0]]
+            
+smiles=smiles_list[0]
+for s in smiles_list[1:]:
+    smiles=smiles+"\r\n"+s
 
-# write output in a .csv file
-with open(output_file, "w") as f:
-    writer = csv.writer(f)
-    writer.writerow(["value"]) # header
-    for o in outputs:
-        writer.writerow([o])
+root_url = "http://www.swissadme.ch/"
+url = "http://www.swissadme.ch/index.php"
+data = {"smiles": smiles }
+sess = requests.Session()
+r1 = sess.post(url, data = data)
+soup = BeautifulSoup(r1.text, features = 'html.parser')
+
+for a in soup.select('a[href^="results"]'):
+    file_url = a['href']
+    
+file = urljoin(root_url, file_url)
+file_data = requests.get(file).content
+df = pd.read_csv(io.StringIO(file_data.decode('utf-8')))
+df.drop(['Molecule'], axis=1,inplace=True)
+df.to_csv(output_file,index=False)
+
