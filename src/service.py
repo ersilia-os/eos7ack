@@ -41,6 +41,11 @@ def String(x):
         return None
     return x
 
+def Mixed(x):
+    try:
+        return float(x)
+    except:
+        return String(x)
 
 class Model(object):
     def __init__(self):
@@ -85,21 +90,18 @@ class Model(object):
             ).wait()
         with open(output_file, "r") as f:
             reader = csv.reader(f)
-            h = next(reader)
+            h = next(reader)[1:]
             R = []
             for r in reader:
-                R += [{"outcome": [Float(x) for x in r]}] # <-- EDIT: Modify according to type of output (Float, String...)
-        meta = {
-            "outcome": h
-        }
-        result = {
-            "result": R,
-            "meta": meta
-        }
+                R += [
+                    {"outcome": [Mixed(x) for x in r[1:]]}
+                ]  # <-- EDIT: Modify according to type of output (Float, String...)
+        meta = {"outcome": h}
+        result = {"result": R, "meta": meta}
         shutil.rmtree(tmp_folder)
         return result
 
-
+    
 class Artifact(BentoServiceArtifact):
     def __init__(self, name):
         super(Artifact, self).__init__(name)
