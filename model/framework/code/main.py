@@ -1,13 +1,13 @@
 # imports
 import os
+import io
 import csv
 import joblib
 import sys
 import requests
-from rdkit import Chem
-from rdkit.Chem.Descriptors import MolWt
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
+import pandas as pd
 
 
 # parse arguments
@@ -40,5 +40,6 @@ file = urljoin(root_url, file_url)
 file_data = requests.get(file).content
 df = pd.read_csv(io.StringIO(file_data.decode('utf-8')))
 df.drop(['Molecule'], axis=1,inplace=True)
+df=df.rename(columns={"Canonical SMILES": "SMILES"})
 df.to_csv(output_file,index=False)
 
