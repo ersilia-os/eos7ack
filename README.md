@@ -1,21 +1,21 @@
-# Model title
+# SwissADME, evaluation of evaluate pharmacokinetics, drug-likeness and medicinal chemistry friendliness of small molecules
 ## Model identifiers
-- Slug:
-- Ersilia ID: 
-- Tags: 
+- Slug: swiss-adme
+- Ersilia ID: eos7ack
+- Tags: ADMET
 
 # Model description
-Short description of the model in one or two sentences.
-- Input:
-- Output: {unit and description of output) 
-- Model type: (Regression or Classification)
-- Training set: (number of compounds and link to the training data)
-- Mode of training: (is it pretrained? that is were the checkpoints downloaded and used to train the model? or is it retrained? that is trained from scratch with an updated data)
+Fast yet robust predictive models for physicochemical properties, pharmacokinetics, drug-likeness and medicinal chemistry friendliness.
+- Input: SMILES
+- Output: Physicochemical property, ADME (Probabilities, scores and real numbers)
+- Model type: Classification, Regression
+- Training set: 10000 Molecules
+- Mode of training: Online
 
 # Source code
 Cite the source publication.
 - Code: include link to the source code
-- Checkpoints: include the link to the checkpoints used if model is a pretrained model
+- Checkpoints: N/A
 
 # License
 State the licences used which are GPL v3 license used by Ersilia and the license used by the source code, if any exists. Use [this guide]() on how to license new models to be incorporated into Ersilia's model hub 
