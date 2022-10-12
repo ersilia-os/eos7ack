@@ -1,7 +1,8 @@
 FROM bentoml/model-server:0.11.0-py37
 MAINTAINER ersilia
 
-RUN pip install bs4==4.11.1
+RUN pip install requests
+RUN pip install beautifulsoup4
 
 WORKDIR /repo
 COPY . /repo
